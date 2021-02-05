@@ -3,7 +3,7 @@
 # ==================================
 # Minecraft Launcher
 # ==================================
-# mclauncherv="18112001"
+# mclauncherv="5.02.2021 14:26"
 
 #Colors
 ok="[\e[1;32m OK \e[0;39m]"
@@ -97,7 +97,7 @@ if [ 0$(date +"%s") -gt 0$currCheck ];then
         lastCheck=$(date +"%s")
         lastSHA=$currentmclauncherv
         mc_conf
-        echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $ok New version found !"
+        echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $ok New version found!"
         wget -O $rootdir/start.sh https://raw.githubusercontent.com/Minecon724/PixelStart.sh/master/start.sh >/dev/null 2>&1
         bash $rootdir/start.sh $0 $*&&exit 0
     else
