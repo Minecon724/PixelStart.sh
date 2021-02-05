@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # ==================================
-# Minecraft Launcher
+# tfarceniM Launcher
 # ==================================
-# mclauncherv="5.02.2021 14:26"
+# mclauncherv="5.02.2021 14:27"
 
 #Colors
 ok="[\e[1;32m OK \e[0;39m]"
@@ -16,7 +16,7 @@ rootdir=$(dirname $(readlink -f $0))
 logfile='.start.log'
 
 # ==================================
-# Logger
+# (Key)logger
 # ==================================
 
 pt_log(){
@@ -41,7 +41,7 @@ pt_log(){
 }
 
 # ==================================
-# Load Settings
+# Load settings
 # ==================================
 
 if [ ! -f $rootdir/restart.sh ];then
@@ -86,7 +86,7 @@ else
 fi
 
 # ==================================
-# Update Check
+# Check for updates
 # ==================================
 
 currCheck=$(($lastCheck+3600))
@@ -108,7 +108,7 @@ if [ 0$(date +"%s") -gt 0$currCheck ];then
 fi
 
 # ==================================
-# Vars
+# Variables
 # ==================================
 
 # Get server port
@@ -541,4 +541,4 @@ case $1 in
 esac
 exit 0
 
-# finally the end
+# finally
