@@ -61,6 +61,7 @@ mc_conf(){
     echo "#Watchdog : if true, script will attempt to start server when './start.sh wdcheck' get it offline." >> $rootdir/.start.conf
     echo "#Must be run with crontab ( */5 * * * * bash $rootdir/start.sh wdcheck ) for check every 5 minutes." >> $rootdir/.start.conf
     echo "watchDog='$watchDog'" >> $rootdir/.start.conf
+    echo "customFlags='$customFlags'" >> $rootdir/.start.conf
     echo "#Don't edit the last two line." >> $rootdir/.start.conf
     echo "lastSHA='$lastSHA'" >> $rootdir/.start.conf
     echo "lastCheck='$lastCheck'" >> $rootdir/.start.conf
@@ -75,6 +76,7 @@ else
     MMAX='3G'
     saves='true'
     watchDog='false'
+    customFlags=''
     lastSHA='abcdefghijklmnopqrstuvwxyz'
     lastCheck='0000000000'
     mc_conf
@@ -144,7 +146,7 @@ mc_start(){
     if [ $(mc_check) = 8 ] || [ $(mc_check) = 9 ];then
         echo -en "[$(date +%H:%M:%S' '%d/%m/%y)] [....] Starting server (timeout set at $timeout sec)"
         cd $rootdir
-        screen -dmSU $screen java -Xms$MMIN -Xmx$MMAX -jar $rootdir/$serverfile --log-strip-color nogui
+        screen -dmSU $screen java -Xms$MMIN -Xmx$MMAX $customFlags -jar $rootdir/$serverfile --log-strip-color nogui
         count=0
         until [ $count -gt $timeout ];do
             if [ -z "$(lsof -i:$serverPort -t)" ];then
