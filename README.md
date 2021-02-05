@@ -1,18 +1,17 @@
 # PixelStart.sh
-Simple start.sh for Minecraft servers
+Simple start script for Minecraft servers
 
-Support the /restart command ingame.
-For this you need to edit the spigot.yml file and change this :
+If you want to use /restart command in game (or console), change this in `spigot.yml`:
 ```
   restart-script: ./start.sh
 ```
-to :
+to:
 ```
   restart-script: ./restart.sh
 ```
 
-## Usage :
-### Basic commands :
+## Usage
+### Basic commands:
 
 Start the server.
 ```bash
@@ -48,8 +47,8 @@ $ ./start.sh saveon
 ```
 When you use crontab to send regularly a save-all command, using saveoff deny sending "save-all" command, usefull when running backups.
 
-### Watchdog commands :
-#### Used with crontab, this script can automatically restart your server when it crashed.
+### Watchdog commands:
+#### When used with crontab, this script can automatically restart your server when it crashed.
 
 Displays watchdog status.
 ```bash
@@ -70,14 +69,14 @@ Run this command with crontab every x minutes.
 ```bash
 $ ./start.sh wdcheck
 ```
-Crontab : For every 5 minutes.
+Crontab: Run every 5 minutes.
 ```
 */5 * * * * bash /path/to/server/start.sh wdcheck
 ```
-## Check function return code :
+## Check function return code:
 ### Using ./start.sh check will return a status code, here is some explanation about it.
-**From 0 to 7** : Basically, the server file was missing.
-When 2, 4 or 6 is returned,it seems there is a server online.
+**From 0 to 7** : The server file is missing.
+When 2, 4 or 6 is returned, it seems there is a server online.
 
 **From 8 to 9** : The server is offline.
 * (8 = no server running at specified port)
@@ -95,7 +94,7 @@ When 2, 4 or 6 is returned,it seems there is a server online.
 * (14 = PID file was missing.)
 * (15 = PID file was found.)
 
-## Dependencies :
+## Dependencies:
 * curl
 * lsof
 * screen
