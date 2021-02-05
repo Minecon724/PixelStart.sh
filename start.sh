@@ -58,7 +58,7 @@ mc_conf(){
     echo "MMAX='$MMAX'" >> $rootdir/.start.conf
     echo "#Using this with crontab, you can allow or deny sending \"save-all\" command to console. Usefull when running backups." >> $rootdir/.start.conf
     echo "saves='$saves'" >> $rootdir/.start.conf
-    echo "#Watchdog : if true, script will attempt to start server when './start.sh wdcheck' get it offline." >> $rootdir/.start.conf
+    echo "#Watchdog: if true, script will attempt to start server when './start.sh wdcheck' get it offline." >> $rootdir/.start.conf
     echo "#Must be run with crontab ( */5 * * * * bash $rootdir/start.sh wdcheck ) for check every 5 minutes." >> $rootdir/.start.conf
     echo "watchDog='$watchDog'" >> $rootdir/.start.conf
     echo "customFlags='$customFlags'" >> $rootdir/.start.conf
@@ -81,7 +81,7 @@ else
     lastCheck='0000000000'
     mc_conf
     pt_log 'Default configuration file created.' 'info'
-    echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $warn Edit new config file if required."
+    echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $warn Please edit config file if required."
     exit 0
 fi
 
@@ -91,14 +91,14 @@ fi
 
 currCheck=$(($lastCheck+3600))
 if [ 0$(date +"%s") -gt 0$currCheck ];then
-    currentmclauncherv=$(curl -fs  https://api.github.com/repos/Crysalix/PixelStart.sh/commits/master | grep sha | head -1 | cut --delimiter=\" -f 4)
+    currentmclauncherv=$(curl -fs  https://api.github.com/repos/Minecon724/PixelStart.sh/commits/master | grep sha | head -1 | cut --delimiter=\" -f 4)
     echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $info Checking for start.sh update..."
     if [ "$currentmclauncherv" != "$lastSHA" ]; then
         lastCheck=$(date +"%s")
         lastSHA=$currentmclauncherv
         mc_conf
         echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $ok New version found !"
-        wget -O $rootdir/start.sh https://raw.githubusercontent.com/Crysalix/PixelStart.sh/master/start.sh >/dev/null 2>&1
+        wget -O $rootdir/start.sh https://raw.githubusercontent.com/Minecon724/PixelStart.sh/master/start.sh >/dev/null 2>&1
         bash $rootdir/start.sh $0 $*&&exit 0
     else
         echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $ok No update found."
@@ -115,7 +115,7 @@ fi
 if [ -f $rootdir/server.properties ];then
     serverPort=$(grep server-port $rootdir/server.properties | cut -d= -f2)
 else
-    pt_log "Can't find server.properties file. First time server started ?" 'warn'
+    pt_log "Can't find server.properties file. First time server started?" 'warn'
     checkServerPort=25565
     while [ $checkServerPort -lt 25665 ];do
         pt_log "Trying port $checkServerPort"
@@ -160,16 +160,16 @@ mc_start(){
         if [ $count = 999 ];then
             echo -e "Done"
             lsof -i:$serverPort -t > $rootdir/.start.pid
-            pt_log "Server started with PID : $(cat .start.pid)" 'info'
+            pt_log "Server started with PID: $(cat .start.pid)" 'info'
             wd_on
         else
             echo -e "."
-            pt_log 'Server fail at boot ? Timeout after $timeout sec' 'warn'
+            pt_log 'Error at server start? Timeout after $timeout sec' 'warn'
             mc_status
             exit 1
         fi
     else
-        pt_log 'Error when start the server !' 'fail'
+        pt_log 'Error when starting server!' 'fail'
         mc_status
         exit 1
     fi
@@ -202,13 +202,13 @@ mc_stop(){
             fi
         else
             echo -e "."
-            pt_log 'Server fail when trying to stop it ? Timeout after 30 sec' 'warn'
+            pt_log 'Error when trying to stop server? Timeout after 30 sec' 'warn'
             mc_status
             exit 1
         fi
     elif [ $(mc_check) -ge 12 ];then
-        pt_log 'Server is already stoped, but screen is alive.' 'warn'
-        echo -en "[$(date +%H:%M:%S' '%d/%m/%y)] [....] Trying to kill the screen..."
+        pt_log 'Server is already stopped, but screen is alive.' 'warn'
+        echo -en "[$(date +%H:%M:%S' '%d/%m/%y)] [....] Trying to kill screen..."
         screen -X -S $screen kill
         sleep 1
         if ps ax | grep -v grep | grep -i SCREEN | grep $screen > /dev/null
@@ -221,7 +221,7 @@ mc_stop(){
             echo -e " $ok Done."
         fi
     else
-        pt_log 'Error when stop the server !' 'fail'
+        pt_log 'Error when stopping server!' 'fail'
         mc_status
         exit 1
     fi
@@ -230,7 +230,7 @@ mc_stop(){
 mc_restart(){
     status=0
     if [ $1 ] && [ $1 = 'fromserver' ];then
-        pt_log 'Server restart requested from server... Waiting for server stop.'
+        pt_log 'Server restart requested from server... Waiting for server to stop.'
         count=0
         pid=$(cat $rootdir/.start.pid)
         until [ $count -gt 30 ];do
@@ -244,13 +244,13 @@ mc_restart(){
         done
         if [ $count = 999 ];then
             echo -e "Done"
-            pt_log 'Server stoped.' 'info'
+            pt_log 'Server stopped.' 'info'
             if [ -f $rootdir/.start.pid ];then
                 rm $rootdir/.start.pid
             fi
         else
             echo -e "."
-            pt_log 'Server fail when trying to stop it ? Timeout after 30 sec' 'warn'
+            pt_log 'Error when trying to stop server? Timeout after 30 sec' 'warn'
             mc_status
             exit 1
         fi
@@ -259,7 +259,7 @@ mc_restart(){
         if [ $(mc_check) -ge 12 ];then
             mc_stop
         else
-            pt_log 'But the server is not running !' 'warn'
+            pt_log 'But the server is not running!' 'warn'
             ((status++))
         fi
         sleep 1
@@ -267,11 +267,11 @@ mc_restart(){
     if [ $(mc_check) = 8 ] || [ $(mc_check) = 9 ];then
         mc_start
     else
-        pt_log 'But the server is already running !' 'warn'
+        pt_log 'But the server is already running!' 'warn'
         ((status++))
     fi
     if [ $status = 2 ];then
-        pt_log 'Hum... There is something wrong here !' 'fail'
+        pt_log 'Hrmmmmm... There is something wrong here!' 'fail'
         mc_status
         exit 1
     fi
@@ -286,21 +286,21 @@ mc_saveoff(){
         screen -p 0 -S $screen -X stuff "save-all$(printf \\r)"
         pt_log 'Suspending saves.' 'ok'
     else
-        pt_log "Can't suspend saves, server is offline !" 'fail'
+        pt_log "Can't suspend saves, server is offline!" 'fail'
         mc_status
         exit 1
     fi
 }
 
 mc_saveon(){
-    pt_log 'Trying to re-enabe saves.'
+    pt_log 'Trying to re-enable saves.'
     if [ $(mc_check) -ge 14 ];then
         saves='true'
         mc_conf
         screen -p 0 -S $screen -X stuff "save-on$(printf \\r)"
         pt_log 'Re-enabling saves.' 'ok'
     else
-        pt_log "Can't re-enabling saves, server is offline !" 'fail'
+        pt_log "Can't re-enabling saves, server is offline!" 'fail'
         mc_status
         exit 1
     fi
@@ -308,42 +308,42 @@ mc_saveon(){
 
 mc_status(){
     echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] [....] Showing status..."
-    echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $info Server location :    $rootdir"
-    echo -ne "[$(date +%H:%M:%S' '%d/%m/%y)] $info Server file :        $serverfile"
+    echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $info Server location:    $rootdir"
+    echo -ne "[$(date +%H:%M:%S' '%d/%m/%y)] $info Server file:        $serverfile"
     if [ -f $rootdir/$serverfile ]; then
-        echo -e " $ok Found it !"
+        echo -e " $ok Found it!"
     else
-        echo -e " $warn Missing !"
+        echo -e " $warn Missing!"
     fi
-    echo -ne "[$(date +%H:%M:%S' '%d/%m/%y)] $info Server screen name : $screen"
+    echo -ne "[$(date +%H:%M:%S' '%d/%m/%y)] $info Server screen name: $screen"
     if ps ax | grep -v grep | grep -i SCREEN | grep $screen > /dev/null
     then
-        echo -e " $ok Screen found !"
+        echo -e " $ok Screen found!"
     else
-        echo -e " $warn Screen not found !"
+        echo -e " $warn Screen not found!"
     fi
-    echo -en "[$(date +%H:%M:%S' '%d/%m/%y)] $info Server port :        $serverPort"
+    echo -en "[$(date +%H:%M:%S' '%d/%m/%y)] $info Server port:        $serverPort"
     if [ "$(lsof -i:$serverPort -t)" ];then
-        echo -e " $ok Server is listen."
+        echo -e " $ok Server is listening on port $serverPort."
         status=0
     else
-        echo -e " $warn No server is listen that port !"
+        echo -e " $warn No server is listening on port $serverPort!"
         status=1
     fi
-    echo -en "[$(date +%H:%M:%S' '%d/%m/%y)] $info PID File :"
+    echo -en "[$(date +%H:%M:%S' '%d/%m/%y)] $info PID File:"
     if [ -f $rootdir/.start.pid ]; then
         pid=$(cat $rootdir/.start.pid)
-        echo -e "           $pid $ok Found it !"
+        echo -e "           $pid $ok Found it!"
     else
-        echo -e "           x $warn Missing !"
+        echo -e "           x $warn Missing!"
     fi
-    echo -en "[$(date +%H:%M:%S' '%d/%m/%y)] $info save-all input :"
+    echo -en "[$(date +%H:%M:%S' '%d/%m/%y)] $info save-all input:"
     if [ $saves = 'true' ];then
         echo -e "     Allow command"
     else
         echo -e "     Deny command"
     fi
-    echo -en "[$(date +%H:%M:%S' '%d/%m/%y)] $info WatchDog status :"
+    echo -en "[$(date +%H:%M:%S' '%d/%m/%y)] $info WatchDog status:"
     if [ $watchDog = 'true' ];then
         echo -e "    ON"
     else
@@ -351,20 +351,20 @@ mc_status(){
     fi
     case $(mc_check) in
         0|1|2|3|4|5|6|7)
-            echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $warn \e[1;31mSERVER FILE IS MISSING !\e[0;39m";;
+            echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $warn \e[1;31mSERVER FILE IS MISSING!\e[0;39m";;
         8|9)
-            echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $warn \e[1;31mSERVER IS OFFLINE !\e[0;39m";;
+            echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $warn \e[1;31mSERVER IS OFFLINE!\e[0;39m";;
         10|11)
-            echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $fail \e[1;31mSERVER IS OUT OF SCREEN !\e[0;39m"
+            echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $fail \e[1;31mSERVER IS OUT OF SCREEN!\e[0;39m"
             sleep 1
             mc_rescue;;
         12|13)
-            echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $warn \e[1;31mSERVER IS OFFLINE !\e[0;39m";;
+            echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $warn \e[1;31mSERVER IS OFFLINE!\e[0;39m";;
         14|15)
-            echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $ok \e[1;32mSERVER IS ONLINE !\e[0;39m";;
+            echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $ok \e[1;32mSERVER IS ONLINE!\e[0;39m";;
         *)
-            echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $fail I GOT AN UNEXPECTED ERROR !"
-            echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] [....] Ask my developers for help.";;
+            echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $fail AN UNEXPECTED ERROR OCCURED!"
+            echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] [....] Ask developers (but idk if they will help) for help.";; # bruh
     esac
 }
 
@@ -402,13 +402,13 @@ mc_input(){
             exit 1
         fi
         if [ $2 != 'save-all' ];then
-            pt_log "Sending command to console : /$command" 'info'
+            pt_log "Sending command to console: /$command" 'info'
             bash -c "screen -p 0 -S $screen -X eval 'stuff \"$command\"\015'"
         elif [ $2 = 'save-all' ] && [ $saves = 'true' ];then
             bash -c "screen -p 0 -S $screen -X eval 'stuff \"$command\"\015'"
         fi
     elif [ $2 != 'save-all' ];then
-        echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $fail Trying to send command but server is offline."
+        echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $fail You can't send command when the server is offline."
         mc_status
         exit 1
     fi
@@ -418,8 +418,8 @@ mc_rescue(){
     if [ -f $rootdir/.start.pid ]; then
         pid=$(cat $rootdir/.start.pid)
         if [ $(ps $pid | grep -v PID) ];then
-            echo -e "Found a process matching that PID. Send SIGTERM signal ?"
-            read -p "Do you want to proceed [y/N] ? " yn
+            echo -e "Found a process matching that PID. Send SIGTERM signal?"
+            read -p "Do you want to proceed [y/N]? " yn
             if [ -z $yn ] || [ $yn != "y" ]; then
                 echo Abort.
                 exit 1
@@ -439,7 +439,7 @@ mc_rescue(){
 }
 
 wd_status(){
-    echo -en "[$(date +%H:%M:%S' '%d/%m/%y)] $info WatchDog status :"
+    echo -en "[$(date +%H:%M:%S' '%d/%m/%y)] $info WatchDog status:"
     if [ $watchDog = 'true' ];then
         echo -e " ON"
         echo -e "$warning Remember to set a crontab task running this script regularly."
@@ -470,29 +470,29 @@ wd_check(){
         fi
         case $check in
             0|1|2|3|4|5|6|7)
-                echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $warn \e[1;31mWATCHDOG : CRITICAL ERROR : File is missing !\e[0;39m"
-                pt_log 'WATCHDOG : CRITICAL ERROR : File is missing !' 'fail';;
+                echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $warn \e[1;31mWATCHDOG : CRITICAL ERROR: File is missing!\e[0;39m"
+                pt_log 'WATCHDOG : CRITICAL ERROR: File is missing!' 'fail';;
             8|9)
-                echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $warn \e[1;31mWATCHDOG : SERVER IS OFFLINE !\e[0;39m"
-                pt_log 'WATCHDOG : SERVER IS OFFLINE ! RESTARTING...' 'warn'
+                echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $warn \e[1;31mWATCHDOG: SERVER IS OFFLINE!\e[0;39m"
+                pt_log 'WATCHDOG : SERVER IS OFFLINE! RESTARTING...' 'warn'
                 bash -c "$rootdir/start.sh start";;
             10|11)
-                echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $fail \e[1;31mWATCHDOG : SERVER IS OUT OF SCREEN !\e[0;39m"
-                pt_log 'WATCHDOG : SERVER IS OUT OF SCREEN ! Trying to fix it...' 'fail'
+                echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $fail \e[1;31mWATCHDOG: SERVER IS OUT OF SCREEN!\e[0;39m"
+                pt_log 'WATCHDOG: SERVER IS OUT OF SCREEN! Trying to fix it...' 'fail'
                 mc_rescue;;
             12|13)
-                echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $warn \e[1;31mWATCHDOG : SERVER IS OFFLINE BUT SCREEN STILL ALIVE !\e[0;39m"
-                pt_log 'WATCHDOG : SERVER IS OFFLINE BUT SCREEN STILL ALIVE !' 'warn'
+                echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $warn \e[1;31mWATCHDOG: SERVER IS OFFLINE BUT SCREEN STILL ALIVE!\e[0;39m"
+                pt_log 'WATCHDOG: SERVER IS OFFLINE BUT SCREEN STILL ALIVE!' 'warn'
                 bash -c "$rootdir/start.sh restart";;
             14|15)
-                echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $ok \e[1;32mWATCHDOG : SERVER IS ONLINE !\e[0;39m";;
+                echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $ok \e[1;32mWATCHDOG: SERVER IS ONLINE!\e[0;39m";;
             *)
-                echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $fail I GOT AN UNEXPECTED ERROR !"
+                echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $fail AN UNEXPECTED ERROR OCCURED!"
                 echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] [....] Ask my developers for help.";;
         esac
     else
-        echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] [....] WATCHDOG DISABLED !"
-        echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] [....] WATCHDOG : I will do nothing until you set watchDog='true' in .start.conf !"
+        echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] [....] WATCHDOG DISABLED!"
+        echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] [....] WATCHDOG: WD will do nothing until you set watchDog='true' in .start.conf !"
     fi
 }
 
@@ -540,3 +540,5 @@ case $1 in
         exit 1;;
 esac
 exit 0
+
+# finally the end
