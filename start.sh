@@ -139,21 +139,6 @@ fi
 # Functions
 # ==================================
 
-root_check(){
-    if [ $(whoami) = "root" ];then
-        for ((r=0 ; r<5 ; r++));do
-            echo -e "$warning Run Minecraft Server as root is not recommended !"
-            sleep 0.5
-        done
-        read -p "Do you want to continue [y/N]? " yn
-        yn=$(echo $yn | awk '{print tolower($0)}')
-        if [ -z $yn ] || [ $yn != "y" ]; then
-            echo Abort.
-            exit 1
-        fi
-    fi
-}
-
 mc_start(){
     pt_log 'Init server start.'
     if [ $(mc_check) = 8 ] || [ $(mc_check) = 9 ];then
@@ -522,7 +507,6 @@ wd_on(){
 }
 
 #Go!
-root_check
 
 case $1 in
     start)
