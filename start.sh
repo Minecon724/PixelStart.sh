@@ -196,7 +196,7 @@ mc_stop(){
         done
         if [ $count = 999 ];then
             echo -e "Done"
-            pt_log 'Server stoped.' 'info'
+            pt_log 'Server stopped.' 'info'
             if [ -f $rootdir/.start.pid ];then
                 rm $rootdir/.start.pid
             fi
