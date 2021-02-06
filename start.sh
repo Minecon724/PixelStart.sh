@@ -454,20 +454,7 @@ wd_status(){
 
 wd_check(){
     if [ $watchDog = 'true' ];then
-        check=0
-        if [ -f $rootdir/$serverfile ];then
-            ((check+=8))
-        fi
-        if ps ax | grep -v grep | grep -i SCREEN | grep $screen > /dev/null
-        then
-            ((check+=4))
-        fi
-        if [ "$(lsof -i:$serverPort -t)" ];then
-            ((check+=2))
-        fi
-        if [ -f $rootdir/.start.pid ];then
-            ((check+=1))
-        fi
+        check=$(mc_check)
         case $check in
             0|1|2|3|4|5|6|7)
                 echo -e "[$(date +%H:%M:%S' '%d/%m/%y)] $warn \e[1;31mWATCHDOG : CRITICAL ERROR: File is missing!\e[0;39m"
